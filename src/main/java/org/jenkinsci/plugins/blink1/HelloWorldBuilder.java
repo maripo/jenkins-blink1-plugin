@@ -1,27 +1,26 @@
 package org.jenkinsci.plugins.blink1;
-import hudson.Launcher;
 import hudson.Extension;
-import hudson.util.FormValidation;
-import hudson.model.AbstractBuild;
+import hudson.Launcher;
 import hudson.model.BuildListener;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.tasks.Builder;
 import hudson.tasks.BuildStepDescriptor;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.QueryParameter;
-
-import javax.servlet.ServletException;
+import hudson.tasks.Builder;
+import hudson.util.FormValidation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import javax.servlet.ServletException;
+
+import net.sf.json.JSONObject;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Sample {@link Builder}.
@@ -67,7 +66,6 @@ public class HelloWorldBuilder extends Builder {
 			listener.getLogger().println("Bonjour, "+name+"!");
 		else
 			listener.getLogger().println("Good Evening, "+name+"!");
-		listener.getLogger().println(Hoge.getHoge());
 		String urlStr = "http://localhost:8934/blink1/fadeToRGB?rgb=%23FF0000&time=2.7";
 		URL url;
 		try
