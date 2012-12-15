@@ -27,6 +27,8 @@ public class Blink1Notifier extends Notifier {
 	private static final String COLOR_CODE_YELLOW = "FFFF00";
 	private static final String COLOR_CODE_RED = "FF0000";
 	
+	private static final int BLINK_PORT = 8934;
+	
 	private static final double DELAY = 0.5;
 
 	@Override
@@ -45,7 +47,7 @@ public class Blink1Notifier extends Notifier {
 	}
 
 	private void blink(BuildListener listener, String colorCode) {
-		String urlStr = "http://localhost:8934/blink1/fadeToRGB?rgb=%23" + colorCode + "&time=" + DELAY;
+		String urlStr = "http://localhost:" + BLINK_PORT + "/blink1/fadeToRGB?rgb=%23" + colorCode + "&time=" + DELAY;
 		URL url;
 		try {
 			URLConnection conn;
