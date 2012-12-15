@@ -27,7 +27,7 @@ public class Blink1Notifier extends Notifier {
 	private static final String COLOR_CODE_YELLOW = "FFFF00";
 	private static final String COLOR_CODE_RED = "FF0000";
 	
-	private static final double DELAY = 1;
+	private static final double DELAY = 0.5;
 
 	@Override
 	public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
@@ -40,10 +40,14 @@ public class Blink1Notifier extends Notifier {
 			colorCode = COLOR_CODE_YELLOW;
 		else if (BallColor.RED==color)
 			colorCode = COLOR_CODE_RED;
+		blink(listener, colorCode);
+		return true;
+	}
+
+	private void blink(BuildListener listener, String colorCode) {
 		String urlStr = "http://localhost:8934/blink1/fadeToRGB?rgb=%23" + colorCode + "&time=" + DELAY;
 		URL url;
-		try
-		{
+		try {
 			URLConnection conn;
 			url = new URL(urlStr);
 			conn = url.openConnection();
@@ -59,10 +63,9 @@ public class Blink1Notifier extends Notifier {
 		{
 			e.printStackTrace();
 		}
-		return true;
 	}
 
-	public BuildStepMonitor getRequiredMonitorService(){
+	public BuildStepMonitor getRequiredMonitorService() {
 		return BuildStepMonitor.NONE;
 	}
 
