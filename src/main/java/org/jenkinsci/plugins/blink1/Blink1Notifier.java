@@ -1,10 +1,4 @@
 package org.jenkinsci.plugins.blink1;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.BallColor;
@@ -15,19 +9,30 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.FormValidation;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
+import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 public class Blink1Notifier extends Notifier {
 	@DataBoundConstructor
 	public Blink1Notifier() {
 	}
 
-	private static final String COLOR_CODE_BLUE = "0000FF";
-	private static final String COLOR_CODE_YELLOW = "FFFF00";
-	private static final String COLOR_CODE_RED = "FF0000";
+	private static final String COLOR_BLUE = "0000FF";
+	private static final String COLOR_YELLOW = "FFFF00";
+	private static final String COLOR_RED = "FF0000";
 	
-	private static final int BLINK_PORT = 8934;
+	private static final String DEFAULT_URL_BASE = "http://localhost:8934";
 	
 	private static final double DELAY = 0.5;
 
@@ -37,17 +42,17 @@ public class Blink1Notifier extends Notifier {
 		BallColor color = build.getResult().color;
 		String colorCode = "FFFFFF";
 		if (BallColor.BLUE==color)
-			colorCode = COLOR_CODE_BLUE;
+			colorCode = COLOR_BLUE;
 		else if (BallColor.YELLOW==color)
-			colorCode = COLOR_CODE_YELLOW;
+			colorCode = COLOR_YELLOW;
 		else if (BallColor.RED==color)
-			colorCode = COLOR_CODE_RED;
+			colorCode = COLOR_RED;
 		blink(listener, colorCode);
 		return true;
 	}
 
 	private void blink(BuildListener listener, String colorCode) {
-		String urlStr = "http://localhost:" + BLINK_PORT + "/blink1/fadeToRGB?rgb=%23" + colorCode + "&time=" + DELAY;
+		String urlStr = getDescriptor().getUrlBase() + "/blink1/fadeToRGB?rgb=%23" + colorCode + "&time=" + DELAY;
 		URL url;
 		try {
 			URLConnection conn;
@@ -79,16 +84,45 @@ public class Blink1Notifier extends Notifier {
 	@Extension
 	public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
+		private String urlBase = DEFAULT_URL_BASE;
+		
 		public DescriptorImpl() {
 			load();
 		}
-
+		
+		public String defaultUrlBase() {
+			return DEFAULT_URL_BASE;
+		}
+		
 		public boolean isApplicable(Class<? extends AbstractProject> aClass) {
 			return true;
+		}
+		
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject form) throws FormException {
+			if (!form.containsKey("urlBase"))
+				return false;
+			this.urlBase = form.getString("urlBase");
+			save();
+			return super.configure(req, form);
+		}
+		public FormValidation doCheckUrlBase(@QueryParameter String value) {
+			if(isValidUrl(value)) 
+				  return FormValidation.ok();
+			else 
+				  return FormValidation.error("URL should start with http:// or https://.");
+			}
+		private boolean isValidUrl(String value)
+		{
+			return value.startsWith("http://") || value.startsWith("https://");
 		}
 
 		public String getDisplayName() {
 			return "Blink1Notifier";
+		}
+		
+		public String getUrlBase () {
+			return this.urlBase;
 		}
 	}
 }
