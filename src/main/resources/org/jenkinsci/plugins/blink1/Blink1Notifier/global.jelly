@@ -2,7 +2,7 @@
   <f:section title="blink(1) Notifier">
     <f:entry title="URL"
         description="URL of blink(1)'s local HTTP server"
-        help="${rootURL}/plugin/blink1/help-url.html"
+        help="/plugin/blink1/help-url.html"
         field="urlBase">
         <f:textbox 
             name="blink1.urlBase"
