@@ -62,8 +62,7 @@ public class Blink1Notifier extends Notifier {
 			String inputLine;
 
 			while ((inputLine = in.readLine()) != null) {
-				System.out.println(inputLine);
-				listener.getLogger().println(inputLine);
+				// listener.getLogger().println(inputLine);
 			}
 			in.close();
 		} catch (IOException e)
