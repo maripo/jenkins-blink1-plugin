@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:section title="blink(1) Notifier">
+    <f:entry title="URL"
+        description="URL of blink(1)'s local HTTP server"
+        help="${rootURL}/plugin/blink1/help-url.html"
+        field="urlBase">
+        <f:textbox 
+            name="blink1.urlBase"
+            value="${descriptor.getUrlBase()}" 
+            default="${descriptor.defaultUrlBase()}"/>
+      </f:entry>
+  </f:section>
+</j:jelly>
